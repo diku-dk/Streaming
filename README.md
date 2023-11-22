@@ -89,8 +89,7 @@ Make sure that you publish the event to the correct stream (not the same stream 
 
 Once an actor receives a termination, we need to find a way to inform the main thread about the termination, so the program can finish. Two of the possible options are:
 
-1. Polling: Create a "Finished" method in the consumer actor class and, in the main, periodically asks both actors whether they are both finished
-2. Create a special channel for acknowledging termination (C4): Send a message to C4 and make sure that main thread subscribe to C4 before publishing the starter event (in C1). In this case, you have to make sure to synchronize the main thread with the thread triggered by the subscription.
+1. Polling: Create a "Finished" method in the consumer actor class and, in the main, you can periodically ask both actors whether they are finished.
 
 ```
 public Task<bool> Finished()
@@ -98,4 +97,8 @@ public Task<bool> Finished()
     // ...
 }
 ```
+
+2. Create a special channel for acknowledging termination (C4): Send a message to C4 and make sure that main thread subscribe to C4 before publishing the starter event (in C1). In this case, you have to make sure to synchronize the main thread with the thread triggered by the subscription.
+
+
 
