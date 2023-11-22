@@ -32,16 +32,18 @@ dotnet run --project Silo
 
 This command will start up the Orleans server (aka silo) and submit a message to an actor. The program finishes upon any key pressed by the user.
 
+To open the project in Visual Studio, make sure to select the Streaming.sln as the solution file, so Visual Studio will recognize the solution as a whole and allow you to debug your application.
+
 ## <a name="exercise"></a>Exercise
 
 ### <a name="description"></a>Description
 
 Starting from the project sample provided, implement the following scenario:
 
-Markup : 1. Two actors exchange events up to a point one of them decides to terminate the communication 
-         2. When the termination is decided by one of them, a special event must be sent to the other actor
-         3. After the other actor receives the termination, no events across actors can be exchanged anymore
-         4. Besides, the application must terminate next
+1. Two actors exchange events up to a point one of them decides to terminate the communication 
+2. When the termination is decided by one of them, a special event must be sent to the other actor
+3. After the other actor receives the termination, no events across actors can be exchanged anymore
+4. Besides, the application must terminate next
 
 Whether the next event to be generated is a termination can be decided randomly. For example, pick a number from 1 to 10, if it is 0, then it should terminate.
 The started event may be sent from the main method (like what you have now in the code).
@@ -86,9 +88,9 @@ if(val == 1)
 Make sure that you publish the event to the correct stream (not the same stream you have received the event!).
 
 Once an actor receives a termination, we need to find a way to inform the main thread about the termination, so the program can finish. Two of the possible options are:
-Markup : 1. Polling: Create a "Finished" method in the consumer actor class and, in the main, periodically asks both actors whether they are both finished
-         2. Create a special channel for acknowledging termination (C4): Send a message to C4 and make sure that main thread subscribe to C4 before publishing the starter event (in C1). In this case, you have to make sure to synchronize the main thread with the thread triggered by the subscription.
-         
+
+1. Polling: Create a "Finished" method in the consumer actor class and, in the main, periodically asks both actors whether they are both finished
+2. Create a special channel for acknowledging termination (C4): Send a message to C4 and make sure that main thread subscribe to C4 before publishing the starter event (in C1). In this case, you have to make sure to synchronize the main thread with the thread triggered by the subscription.
 
 ```
 public Task<bool> Finished()
