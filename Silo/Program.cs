@@ -6,6 +6,7 @@ using Orleans.Runtime;
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using GrainInterfaces;
+using System.Threading.Tasks;
 
 using var host = new HostBuilder()
     .UseOrleans(builder =>
@@ -34,8 +35,11 @@ var guid = new Guid("AD713788-B5AE-49FF-8B2C-F311B9CB0CC1");
 
 // 1 - Initialize the grain first
 var grain = client.GetGrain<IConsumerGrain>(0);
+// var grain1 = client.GetGrain<IConsumerGrain>(1);
 
 await grain.BecomeConsumer(guid, "RANDOMDATA", "StreamProvider");
+
+// await grain.StopConsuming();
 
 // 2 - Get one of the providers which we defined in our config
 var streamProvider = client.GetStreamProvider("StreamProvider");
@@ -45,7 +49,11 @@ var streamId = StreamId.Create("RANDOMDATA", guid);
 var stream = streamProvider.GetStream<int>(streamId);
 
 // 4 - Send event in the stream
-await stream.OnNextAsync(1);
+Task taskToWait = stream.OnNextAsync(1);
+
+// .... other tasks
+
+await taskToWait;
 
 Console.WriteLine("            The Orleans server started. Press any key to terminate...         ");
 Console.WriteLine("\n *************************************************************************");
